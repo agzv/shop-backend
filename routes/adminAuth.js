@@ -2,10 +2,10 @@ const express = require('express');
 const router = express.Router();
 const { body } = require('express-validator');
 
-const authController = require('../controllers/auth');
+const authController = require('../controllers/adminAuth');
 const AdminUser = require('../models/adminUser');
 
-router.post('/admin/create-admin-user', [
+router.post('/create-admin-user', [
     body('firstName').trim().not().isEmpty(),
     body('lastName').trim().not().isEmpty(),
     body('email')
@@ -26,6 +26,6 @@ router.post('/admin/create-admin-user', [
     
 ], authController.createAdminUser);
 
-router.post('/admin/login-admin-user', authController.loginAdminUser);
+router.post('/login-admin-user', authController.loginAdminUser);
 
 module.exports = router;

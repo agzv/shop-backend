@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
     let decodedToken;
     
     try {
-        decodedToken = JWT.verify(token, 'mysupersecret');
+        decodedToken = JWT.verify(token, 'usersecret');
     } catch(e) {
         e.statusCode = 500;
         throw e;
@@ -25,6 +25,6 @@ module.exports = (req, res, next) => {
         throw error;
     }
 
-    req.adminUserId = decodedToken.userId;
+    req.userId = decodedToken.userId;
     next();
 };

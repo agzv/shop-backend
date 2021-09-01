@@ -14,7 +14,15 @@ const productSchema = new Schema({
         type: String,
         required: true
     },
-    imageUrl: String
+    imageUrl: {
+        type: String,
+        required: true
+    },
+    creator: {
+        type: Schema.Types.ObjectId,
+        ref: 'AdminUser',
+        required: true
+    }
 });
 
 module.exports = mongoose.model('Product', productSchema);

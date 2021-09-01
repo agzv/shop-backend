@@ -5,13 +5,14 @@ const multer = require('multer');
 const path = require('path');
 
 const productRoutes = require('./routes/product');
-const authRoutes = require('./routes/auth');
+const adminAuthRoutes = require('./routes/adminAuth');
+const userAuthRoutes = require('./routes/userAuth');
 
 const app = express();
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'images/products');
+        cb(null, 'images');
     },
     filename: (req, file, cb) => {
         cb(null, new Date().toISOString() + '-' + file.originalname);
@@ -19,7 +20,7 @@ const fileStorage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-    if(file.mimetype === 'img/png' || file.mimetype === 'img/jpeg'|| file.mimetype === 'img/jpg') {
+    if(file.mimetype === 'image/png' || file.mimetype === 'image/jpeg'|| file.mimetype === 'image/jpg') {
         cb(null, true);
     } else {
         cb(null, false);
@@ -28,7 +29,7 @@ const fileFilter = (req, file, cb) => {
 
 app.use(bodyParser.json());
 app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));
-app.use('/images/products', express.static(path.join(__dirname, 'images/products')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // CORS
 app.use((req, res, next) => {
@@ -39,7 +40,8 @@ app.use((req, res, next) => {
 });
 
 app.use('/products', productRoutes);
-app.use('/auth', authRoutes);
+app.use('/auth/admin', adminAuthRoutes);
+app.use('/auth/user', userAuthRoutes);
 
 // ERROR HANDLING
 app.use((err, req, res, next) => {
