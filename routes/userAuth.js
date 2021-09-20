@@ -6,8 +6,8 @@ const authController = require('../controllers/userAuth');
 const User = require('../models/user');
 
 router.post('/create-user', [
-    body('firstName').trim().not().isEmpty(),
-    body('lastName').trim().not().isEmpty(),
+    body('firstName', 'Please enter your first name').trim().not().isEmpty(),
+    body('lastName', 'Please enter your last name').trim().not().isEmpty(),
     body('email')
         .isEmail()
         .withMessage('Please enter a valid email')
@@ -20,11 +20,14 @@ router.post('/create-user', [
         })
         .normalizeEmail(),
     body('password').trim().isLength({ min: 5 }).withMessage('Your password is too short, min 5 characters'),
-    body('country').trim().not().isEmpty().withMessage('Field is required'),
-    body('address').trim().not().isEmpty().withMessage('Field is required'),
-    body('zip').trim().not().isEmpty().withMessage('Field is required')
+    body('country').trim().not().isEmpty().withMessage('Please enter your country'),
+    body('address').trim().not().isEmpty().withMessage('Please enter your address'),
+    body('zip').trim().not().isEmpty().withMessage('Please enter your zip code')
 ], authController.createUser);
 
-router.post('/login-user', authController.loginUser);
+router.post('/login-user', [
+    body('email', 'Please enter your email').trim().not().isEmpty(),
+    body('password', 'Please enter your password').trim().not().isEmpty()
+], authController.loginUser);
 
 module.exports = router;

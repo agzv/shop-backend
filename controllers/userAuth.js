@@ -18,7 +18,8 @@ exports.createUser = (req, res, next) => {
     const { firstName, lastName, email, password, confirmPassword, country, address, zip } = req.body;
 
     if(password !== confirmPassword) {
-        const error = new Error('Passwords have to match');
+        const error = new Error('Validation failed');
+        error.data = [{ param: 'confirmPassword', msg: 'Passwords have to match' }]
         error.statusCode = 422;
         throw error;
     }
@@ -37,7 +38,7 @@ exports.createUser = (req, res, next) => {
              });
             return user.save();
         })
-        .then(result => {
+        .then(() => {
             res.status(200).json({ message: 'User was created successfully' });
         })
         .catch(err => {
@@ -49,14 +50,23 @@ exports.createUser = (req, res, next) => {
 };
 
 exports.loginUser = (req, res, next) => {
+    const errors = validationResult(req);
     const email = req.body.email;
     const password = req.body.password;
     let loadedUser;
 
+    if(!errors.isEmpty()) {
+        const error = new Error('Validation failed');
+        error.data = errors.array();
+        error.statusCode = 422;
+        throw error;
+    }
+    
     User.findOne({ email: email })
         .then(user => {
             if(!user) {
-                const error = new Error('A user with this email doesn\'t exist');
+                const error = new Error('Validation failed');
+                error.data = [{ param: 'email', msg: 'A user with this email doesn\'t exist' }]
                 error.statusCode = 401;
                 throw error;
             }
@@ -66,7 +76,8 @@ exports.loginUser = (req, res, next) => {
         })
         .then(isEqual => {
             if(!isEqual) {
-                const error = new Error('Wrong password');
+                const error = new Error('Validation failed');
+                error.data = [{ param: 'password', msg: 'Wrong password' }];
                 error.statusCode = 401;
                 throw error;
             }

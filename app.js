@@ -1,14 +1,17 @@
+const path = require('path');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const multer = require('multer');
-const path = require('path');
+const compression = require('compression');
 
 const productRoutes = require('./routes/product');
 const adminAuthRoutes = require('./routes/adminAuth');
 const userAuthRoutes = require('./routes/userAuth');
 
 const app = express();
+
+app.use(compression());
 
 const fileStorage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -45,15 +48,14 @@ app.use('/auth/user', userAuthRoutes);
 
 // ERROR HANDLING
 app.use((err, req, res, next) => {
-    console.log(err);
     const status = err.statusCode || 500;
     const message = err.message;
     const data = err.data;
     res.status(status).json({error: { message: message, data: data }});
 });
 
-mongoose.connect('mongodb+srv://anvar05:barbos91@cluster0.peapc.mongodb.net/shop?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.peapc.mongodb.net/${process.env.MONGO_DATABASE_DEFAULT}?retryWrites=true&w=majority`, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
-        app.listen(3100);
+        app.listen(process.env.PORT || 3100);
     })
     .catch(err => console.log(err));

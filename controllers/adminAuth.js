@@ -54,7 +54,8 @@ exports.loginAdminUser = (req, res, next) => {
     AdminUser.findOne({ email: email })
         .then(user => {
             if(!user) {
-                const error = new Error('A user with this email doesn\'t exist');
+                const error = new Error('Validation failed');
+                error.data = [{ param: 'email', msg: 'A user with this email doesn\'t exist' }];
                 error.statusCode = 401;
                 throw error;
             }
@@ -74,7 +75,7 @@ exports.loginAdminUser = (req, res, next) => {
                 userId: loadedUser._id.toString()
             }, 'mysupersecret', { expiresIn: '1hr' });
 
-            res.status(200).json({ token: token, userId: loadedUser._id.toString() });
+            res.status(200).json({ adminToken: token, adminUserId: loadedUser._id.toString() });
         })
         .catch(err => {
             if(!err.statusCode) {

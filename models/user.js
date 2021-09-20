@@ -66,7 +66,7 @@ userSchema.methods.addToCart = function(product) {
     return this.save();
 };
 
-userSchema.methods.removeFromCart = productId => {
+userSchema.methods.removeFromCart = function(productId) {
     const updatedCartItems = this.cart.items.filter(cartItem => {
         return cartItem.productId.toString() !== productId.toString();
     });
@@ -74,7 +74,7 @@ userSchema.methods.removeFromCart = productId => {
     return this.save();
 };
 
-userSchema.methods.clearCart = () => {
+userSchema.methods.clearCart = function() {
     this.cart = { items: [] };
     return this.save();
 };
